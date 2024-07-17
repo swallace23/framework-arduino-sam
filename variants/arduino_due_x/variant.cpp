@@ -309,11 +309,13 @@ void serialEvent() __attribute__((weak));
 void serialEvent() { }
 
 // IT handlers
+#include "custom_uart_handler.h"
+#ifndef CUSTOM_UART_HANDLER
 void UART_Handler(void)
 {
   Serial.IrqHandler();
 }
-
+#endif
 // ----------------------------------------------------------------------------
 /*
  * USART objects
