@@ -52,7 +52,7 @@ void UARTClass::init(const uint32_t dwBaudRate, const uint32_t modeReg)
   pmc_enable_periph_clk( _dwId );
 
   // Disable PDC channel
-  _pUart->UART_PTCR = UART_PTCR_RXTDIS | UART_PTCR_TXTDIS;
+  //_pUart->UART_PTCR = UART_PTCR_RXTDIS | UART_PTCR_TXTDIS;
 
   // Reset and disable receiver and transmitter
   _pUart->UART_CR = UART_CR_RSTRX | UART_CR_RSTTX | UART_CR_RXDIS | UART_CR_TXDIS;
@@ -64,11 +64,11 @@ void UARTClass::init(const uint32_t dwBaudRate, const uint32_t modeReg)
   _pUart->UART_BRGR = (SystemCoreClock / dwBaudRate) >> 4;
 
   // Configure interrupts
-  _pUart->UART_IDR = 0xFFFFFFFF;
-  _pUart->UART_IER = UART_IER_RXRDY | UART_IER_OVRE | UART_IER_FRAME;
+  //_pUart->UART_IDR = 0xFFFFFFFF;
+  //_pUart->UART_IER = UART_IER_RXRDY | UART_IER_OVRE | UART_IER_FRAME;
 
   // Enable UART interrupt in NVIC
-  NVIC_EnableIRQ(_dwIrq);
+  //NVIC_EnableIRQ(_dwIrq);
 
   // Make sure both ring buffers are initialized back to empty.
   _rx_buffer->_iHead = _rx_buffer->_iTail = 0;
