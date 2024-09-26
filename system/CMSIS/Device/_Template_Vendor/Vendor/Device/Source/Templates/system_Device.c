@@ -61,7 +61,51 @@ void SystemCoreClockUpdate (void)            /* Get Core Clock Frequency      */
          register settings.
          This function can be used to retrieve the system core clock frequeny
          after user changed register sittings.                                */
-  SystemCoreClock = __SYSTEM_CLOCK;
+  EFC0->EEFC_FMR = EEFC_FMR_FWS(4);
+	EFC1->EEFC_FMR = EEFC_FMR_FWS(4);
+
+	/*MODIFIED FOR 317 LAB EXTERNAL CLOCK - Sean*/
+	/* Initialize main oscillator */
+	if (!(PMC->CKGR_MOR & CKGR_MOR_MOSCSEL)) {
+		/*PMC->CKGR_MOR = SYS_CKGR_MOR_KEY_VALUE | SYS_BOARD_OSCOUNT | 
+			                     CKGR_MOR_MOSCRCEN | CKGR_MOR_MOSCXTBY;*/
+		PMC->CKGR_MOR = SYS_CKGR_MOR_KEY_VALUE | SYS_BOARD_OSCOUNT | 
+			                     CKGR_MOR_MOSCRCEN | CKGR_MOR_MOSCXTEN;
+		while (!(PMC->PMC_SR & PMC_SR_MOSCXTS)) {
+		}
+	}
+	/*MODIFIED FOR 317 LAB EXTERNAL CLOCK - Sean*/
+	/* Switch to 3-20MHz Xtal oscillator */
+	/*PMC->CKGR_MOR = SYS_CKGR_MOR_KEY_VALUE | SYS_BOARD_OSCOUNT | 
+                CKGR_MOR_MOSCRCEN | CKGR_MOR_MOSCXTBY | CKGR_MOR_MOSCSEL;*/
+
+	PMC->CKGR_MOR = SYS_CKGR_MOR_KEY_VALUE | SYS_BOARD_OSCOUNT | 
+	                           CKGR_MOR_MOSCRCEN | CKGR_MOR_MOSCXTEN | CKGR_MOR_MOSCSEL;
+
+	while (!(PMC->PMC_SR & PMC_SR_MOSCSELS)) {
+	}
+ 	PMC->PMC_MCKR = (PMC->PMC_MCKR & ~(uint32_t)PMC_MCKR_CSS_Msk) | 
+		                     PMC_MCKR_CSS_MAIN_CLK;
+	while (!(PMC->PMC_SR & PMC_SR_MCKRDY)) {
+	}
+
+	/* Initialize PLLA */
+	PMC->CKGR_PLLAR = SYS_BOARD_PLLAR;
+	while (!(PMC->PMC_SR & PMC_SR_LOCKA)) {
+	}
+
+	/* Switch to main clock */
+	PMC->PMC_MCKR = (SYS_BOARD_MCKR & ~PMC_MCKR_CSS_Msk) | PMC_MCKR_CSS_MAIN_CLK;
+	while (!(PMC->PMC_SR & PMC_SR_MCKRDY)) {
+	}
+
+	/* Switch to PLLA */
+	PMC->PMC_MCKR = SYS_BOARD_MCKR;
+	while (!(PMC->PMC_SR & PMC_SR_MCKRDY)) {
+	}
+
+	SystemCoreClock = CHIP_FREQ_CPU_MAX;
+  //SystemCoreClock = __SYSTEM_CLOCK;
 }
 
 /**
