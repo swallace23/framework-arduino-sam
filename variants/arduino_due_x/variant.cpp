@@ -110,7 +110,7 @@
  *
  */
 #include "chip.h"
-#include "sam3x8c.h"
+#include "cmsis_include/sam3x8c.h"
 #ifdef __cplusplus
 extern "C" {
 #endif
