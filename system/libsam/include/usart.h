@@ -59,7 +59,6 @@
  *------------------------------------------------------------------------------*/
 
 #include "../chip.h"
-#include "C:\Users\skwal\Documents\shield_code-6.0\src\cmsis_include\component\usart.h"
 
 #include <stdint.h>
 
